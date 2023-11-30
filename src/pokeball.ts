@@ -1,7 +1,8 @@
-import { Asset, Utils } from '@three.ez/main';
+import { Asset, Tween, Utils } from '@three.ez/main';
 import {
   AnimationAction,
   AnimationMixer,
+  AudioLoader,
   Box3,
   Camera,
   CircleGeometry,
@@ -12,6 +13,7 @@ import {
   QuadraticBezierCurve3,
   SkinnedMesh,
   Vector3,
+  Audio,
 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
@@ -19,6 +21,7 @@ import { Pikachu, pikaGeoBBox } from './pikachu';
 import { Confetti } from './confetti';
 
 Asset.preload(GLTFLoader, 'pokeball.glb');
+Asset.preload(AudioLoader, 'throw.mp3', 'pokeball.mp3');
 
 let bboxGeo: Box3;
 
@@ -30,6 +33,9 @@ export class Pokeball extends Group {
   private _curve: QuadraticBezierCurve3;
   private _target: Mesh;
   private _catched = false;
+  private _rotAxis: Vector3;
+  private _speed = Math.random() * 15 + 10;
+  private _end = false;
 
   constructor(camera: Camera) {
     super();
@@ -65,20 +71,35 @@ export class Pokeball extends Group {
     this.on('animate', e => {
       if (this._thrown) {
         if (this._elapsed > 1.5) {
-          this.catch();
+          this.fade();
           return;
         }
 
         this._mixer.update(e.delta);
 
         if (this._catched) {
-          if (this._action.time === 1.0833333730697632) {
+          if (!this._end) {
+            new Audio(this.scene.userData.audioListener)
+              .setBuffer(Asset.get('pokeball.mp3'))
+              .setVolume(0.2)
+              .play();
+            this._end = true;
+          }
+          if (this._action.time === this._action.getClip().duration) {
             this.catch();
           }
           return;
         }
+
         this._elapsed += e.delta * 1.2;
         this.children[0].position.copy(this._curve.getPointAt(Math.min(1, this._elapsed)));
+
+        if (this._elapsed < 1) {
+          this.children[0].children[0].children[0].children[0].children[1].children[0].rotateOnWorldAxis(
+            this._rotAxis,
+            e.delta * this._speed,
+          );
+        }
 
         const bbox = bboxGeo.clone().applyMatrix4(this.children[0].children[0].matrixWorld);
         const array = this.scene.userData.pika as Pikachu[];
@@ -100,24 +121,27 @@ export class Pokeball extends Group {
     });
 
     this.on('drag', e => {
-      // if (e.position.y > 0) {
-      //   e.preventDefault();
-      //   return;
-      // }
       const quatCam = camera.quaternion.clone().invert();
       const test = this.children[0].getWorldPosition(new Vector3());
       test.x *= -1;
-      test.y *= 5;
+      test.y *= 10;
       const dir = test.clone().sub(camera.position).applyQuaternion(quatCam);
+      dir.z = dir.y;
+      dir.y = 0;
+      this._rotAxis = dir.normalize();
       const endPosition = test
         .clone()
         .add(dir)
         .setY(0)
-        .setLength(test.length() * 8);
+        .setLength(test.length() * 2.5);
       this._target.position.copy(endPosition);
     });
 
     this.on('dragend', () => {
+      new Audio(this.scene.userData.audioListener)
+        .setBuffer(Asset.get('throw.mp3'))
+        .setVolume(0.2)
+        .play();
       this._thrown = true;
       this.interceptByRaycaster = false;
       const pos = this.children[0].getWorldPosition(new Vector3());
@@ -135,9 +159,26 @@ export class Pokeball extends Group {
   }
 
   public catch(): void {
+    this.children[0].children[0].children[0].children[0].children[1].children[0].rotation.set(
+      0,
+      0,
+      0,
+    );
+
+    new Tween(this.children[0].position).to(1000, { y: 0 }, { easing: 'easeOutBounce' }).start();
+
     this.children[0]
       .tween()
-      .to(150, { scale: 0 }, { easing: 'linear' })
+      .delay(1000)
+      .to(300, { scale: 0 }, { easing: 'easeInBack' })
+      .call(() => this.removeFromParent())
+      .start();
+  }
+
+  public fade(): void {
+    this.children[0]
+      .tween()
+      .to(300, { scale: 0 }, { easing: 'easeInBack' })
       .call(() => this.removeFromParent())
       .start();
   }

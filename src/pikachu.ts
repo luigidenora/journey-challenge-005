@@ -1,6 +1,5 @@
-import { Asset, Tween, Utils } from '@three.ez/main';
+import { Asset, Tween } from '@three.ez/main';
 import {
-  AnimationAction,
   AnimationMixer,
   Box3,
   BufferGeometry,
@@ -34,7 +33,7 @@ export class Pikachu extends Group {
     this.interceptByRaycaster = false;
 
     const gltf = Asset.get<GLTF>('pikachuFrame.glb');
-    this.scale.setScalar(0);
+    this.scale.setScalar(0.0001);
     this.add(...clone(gltf.scene).children);
     this._mixer.clipAction(gltf.animations[0]).play();
 
@@ -84,7 +83,7 @@ export class Pikachu extends Group {
     this.on('animate', e => {
       if (this._catched) return;
       this._mixer.update(e.delta * this._speed);
-      this.translateZ(e.delta * this._speed * 0.1);
+      this.translateZ(e.delta * this._speed * 0.2);
     });
   }
 
