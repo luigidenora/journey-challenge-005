@@ -16,7 +16,7 @@ function appendUniqueImgChildren(parent: HTMLDivElement, children: string[]) {
   parent.appendChild(documentFragment);
 }
 
-function createImgFromString(str) {
+function createImgFromString(str:string) {
   const img = document.createElement('img');
   img.src = `https://avatars.githubusercontent.com/${str}`;
   img.id = `${str}`;
