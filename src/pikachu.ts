@@ -26,9 +26,10 @@ export class Pikachu extends Group {
 
     Utils.computeBoundingSphereChildren(this); // to make raycast works properly
 
-    const mask = this.getObjectByName('PikachuF_6') as SkinnedMesh<BufferGeometry, MeshStandardMaterial>;
-    mask.material.side = FrontSide;
-    mask.material.map = texture
+    const object = this.getObjectByName('PikachuF_6') as SkinnedMesh<BufferGeometry, MeshStandardMaterial>;
+    const material = object.material.clone();
+    object.material = material
+    material.map = texture
 
     console.log(this.getObjectByName('PikachuF_6'))
     

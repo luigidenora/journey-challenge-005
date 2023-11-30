@@ -16,7 +16,8 @@ await Asset.preloadAllPending({
 });
 
 const scene = new Scene().add(
-  new Pikachu('brunosimon'),
+  new Pikachu('luigidenora'),
+  new Pikachu('brunosimon').translateX(0.3),
   new DirectionalLight('white', 2).translateZ(1),
   new AmbientLight('white', 1)
   );
