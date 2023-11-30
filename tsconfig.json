@@ -1,16 +1,21 @@
 {
   "compilerOptions": {
-    "module": "ES2022",
-    "target": "ES2022",
+    "outDir": "dist",
+    "module": "ESNext",
+    "target": "ESNext",
     "strict": true,
     "noImplicitOverride": true,
     "strictNullChecks": false,
     "esModuleInterop": true,
     "moduleResolution": "node",
+
     "paths": {
       "three": [
         "./node_modules/@three.ez/main/types"
       ]
     }
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }
