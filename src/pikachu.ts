@@ -1,5 +1,5 @@
 import { Asset, Tween, Utils } from '@three.ez/main';
-import { AnimationAction, AnimationMixer, BufferGeometry, Group, MeshStandardMaterial, SkinnedMesh, TextureLoader, Vector2 } from 'three';
+import { AnimationAction, AnimationMixer, BufferGeometry, FrontSide, Group, LinearSRGBColorSpace, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, SRGBToLinear, SkinnedMesh, TextureLoader, Vector2 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
@@ -15,7 +15,9 @@ export class Pikachu extends Group {
   constructor(username: string) {
     super();
     const texture = new TextureLoader().load(`https://avatars.githubusercontent.com/${username ?? '%23'}`);
-  
+    texture.colorSpace = SRGBColorSpace
+    
+ 
     const gltf = Asset.get<GLTF>(GLTF_PICACHU_URL);
     this.scale.divideScalar(5);
     console.log(this);
@@ -24,8 +26,12 @@ export class Pikachu extends Group {
 
     Utils.computeBoundingSphereChildren(this); // to make raycast works properly
 
-    (this.getObjectByName('PikachuF_6') as SkinnedMesh<BufferGeometry,MeshStandardMaterial>).material.map = texture
+    const mask = this.getObjectByName('PikachuF_6') as SkinnedMesh<BufferGeometry, MeshStandardMaterial>;
+    mask.material.side = FrontSide;
+    mask.material.map = texture
 
+    console.log(this.getObjectByName('PikachuF_6'))
+    
     const map = ((this.getObjectByName('PikachuF_4') as SkinnedMesh).material as MeshStandardMaterial).map;
 
     const neutral = new Vector2(0, 0);
