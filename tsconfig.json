@@ -6,6 +6,11 @@
     "noImplicitOverride": true,
     "strictNullChecks": false,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "paths": {
+      "three": [
+        "./node_modules/@three.ez/main/types"
+      ]
+    }
   }
 }
