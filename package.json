@@ -8,7 +8,7 @@
     "deploy-server": "cd server && vercel"
   },
   "dependencies": {
-    "@three.ez/main": "^0.4.0",
+    "@three.ez/main": "^0.4.4",
     "three": "^0.158.0"
   },
   "devDependencies": {
