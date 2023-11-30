@@ -3,51 +3,11 @@ const API = 'https://challange-server.vercel.app/';
 export const openDialog = async () => {
   await emitUsernameData();
   // Create a dialog container
-  const dialogContainer = document.createElement('div');
-  dialogContainer.classList.add('dialog-container');
-  dialogContainer.style.zIndex = "99"
 
-  // Create dialog content
-  const dialogContent = document.createElement('div');
-  dialogContent.classList.add('dialog-content');
+  const form = document.getElementById('username-info');
 
-  // Create input for GitHub username
-  const inputLabel = document.createElement('label');
-  inputLabel.textContent = 'Enter your GitHub username:';
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.value = 'luigidenora';
-  const closeButton = document.createElement('button');
-  closeButton.textContent = 'Close';
-
-  // Add elements to the dialog content
-  dialogContent.appendChild(inputLabel);
-  dialogContent.appendChild(input);
-  dialogContent.appendChild(closeButton);
-
-  // Add dialog content to the container
-  dialogContainer.appendChild(dialogContent);
-
-  // Append the dialog container to the body
-  document.body.appendChild(dialogContainer);
-  closeButton.click();
   // Add event listener for the close button
-  closeButton.addEventListener('click', async () => {
-    const githubUsername = input.value.trim();
-
-    if (githubUsername) {
-      // If the user provided a username, send it to the server
-      await sendUsernameToServer(githubUsername);
-
-      // After sending, fetch all names from the server
-      await emitUsernameData();
-
-      // In a real application, you might want to update your UI with the fetched data
-    }
-
-    // Remove the dialog container from the body
-    document.body.removeChild(dialogContainer);
-  });
+  form.addEventListener('submit', onFormSubmit);
 };
 
 const sendUsernameToServer = async (username: string) => {
@@ -77,6 +37,25 @@ const fetchAllNames = async () => {
   const data = await response.json();
   return data.names;
 };
+
+async function onFormSubmit(ev: SubmitEvent) {
+  ev.preventDefault();
+  const formData = new FormData(ev.target as HTMLFormElement);
+
+  const githubUsername = formData.get('nickname').toString();
+  if (githubUsername) {
+    // If the user provided a username, send it to the server
+    await sendUsernameToServer(githubUsername);
+
+    // After sending, fetch all names from the server
+    await emitUsernameData();
+
+    // In a real application, you might want to update your UI with the fetched data
+  }
+
+  // Remove the dialog container from the body
+  (document.getElementById('nickname-dialog') as HTMLDialogElement).close();
+}
 
 async function emitUsernameData() {
   const allNames = await fetchAllNames();
