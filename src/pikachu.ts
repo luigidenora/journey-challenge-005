@@ -1,9 +1,9 @@
-import { AnimationAction, AnimationMixer, Group, MeshStandardMaterial, SkinnedMesh, Vector2 } from 'three';
+import { AnimationAction, AnimationMixer, Group, MeshBasicMaterial, MeshStandardMaterial, SkinnedMesh, Texture, TextureLoader, Vector2 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Main, PerspectiveCameraAuto, Asset, Utils, Tween } from '@three.ez/main';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
-const GLTF_PICACHU_URL = 'assets/pikachuF.glb';
+const GLTF_PICACHU_URL = 'assets/pikachuFrame.glb';
 
 Asset.preload(GLTFLoader, GLTF_PICACHU_URL);
 
@@ -12,15 +12,17 @@ export class Pikachu extends Group {
   private _idleAction: AnimationAction;
   private _runAction: AnimationAction;
 
-  constructor() {
+  constructor(username: string) {
     super();
+    Asset.preload(TextureLoader, `https://avatars.githubusercontent.com/${username ?? '%23'}`);
     const gltf = Asset.get<GLTF>(GLTF_PICACHU_URL);
     this.scale.divideScalar(5);
+    console.log(this);
     this.add(...clone(gltf.scene).children);
     this._idleAction = this._mixer.clipAction(gltf.animations[0]).play();
 
     Utils.computeBoundingSphereChildren(this); // to make raycast works properly
-
+    ((this.getObjectByName('PikachuF_6') as SkinnedMesh).material as MeshStandardMaterial).map = Asset.get<Texture>(`https://avatars.githubusercontent.com/${username ?? '%23'}`);
     const map = ((this.getObjectByName('PikachuF_4') as SkinnedMesh).material as MeshStandardMaterial).map;
 
     const neutral = new Vector2(0, 0);
