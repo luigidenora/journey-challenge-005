@@ -20,7 +20,8 @@ window.addEventListener('fetchData', ((customEvent: CustomEvent) => {
   const scene = new Scene().add(
     new DirectionalLight('white', 2).translateZ(1),
     new AmbientLight('white', 1),
-    ...names.map((n: string, i: number) => new Pikachu(n).translateX(i * 0.2)),
+    ...names.map((n: string, i: number) => new Pikachu(n).translateX(3 * Math.random())),
+    ...names.map((n: string, i: number) => new Pikachu(n).translateX(-3 * Math.random())),
     new Pokeball(camera),
   );
 
