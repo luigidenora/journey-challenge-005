@@ -1,9 +1,11 @@
 const API = 'https://challange-server.vercel.app/';
 // dialog.ts
 export const openDialog = async () => {
+  await emitUsernameData();
   // Create a dialog container
   const dialogContainer = document.createElement('div');
   dialogContainer.classList.add('dialog-container');
+  dialogContainer.style.zIndex = "99"
 
   // Create dialog content
   const dialogContent = document.createElement('div');
@@ -38,12 +40,7 @@ export const openDialog = async () => {
       await sendUsernameToServer(githubUsername);
 
       // After sending, fetch all names from the server
-      const allNames = await fetchAllNames();
-      console.log('All Names:', allNames);
-
-      // Dispatch a custom event with the fetched data
-      const fetchDataEvent = new CustomEvent('fetchData', { detail: allNames });
-      window.dispatchEvent(fetchDataEvent);
+      await emitUsernameData();
 
       // In a real application, you might want to update your UI with the fetched data
     }
@@ -69,9 +66,9 @@ const sendUsernameToServer = async (username: string) => {
 
   // Replace the URL with your actual server URL
   await fetch(`${API}api/names`, requestOptions)
-    .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => console.log('error', error));
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
 };
 
 const fetchAllNames = async () => {
@@ -80,3 +77,12 @@ const fetchAllNames = async () => {
   const data = await response.json();
   return data.names;
 };
+
+async function emitUsernameData() {
+  const allNames = await fetchAllNames();
+  console.log('All Names:', allNames);
+
+  // Dispatch a custom event with the fetched data
+  const fetchDataEvent = new CustomEvent('fetchData', { detail: allNames });
+  window.dispatchEvent(fetchDataEvent);
+}
