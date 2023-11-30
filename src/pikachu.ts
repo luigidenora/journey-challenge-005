@@ -1,6 +1,6 @@
-import THREE, { AnimationAction, AnimationMixer, BufferGeometry, Group, MeshBasicMaterial, MeshStandardMaterial, SkinnedMesh, Texture, TextureLoader, Vector2 } from 'three';
+import { Asset, Tween, Utils } from '@three.ez/main';
+import { AnimationAction, AnimationMixer, BufferGeometry, Group, MeshStandardMaterial, SkinnedMesh, TextureLoader, Vector2 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Main, PerspectiveCameraAuto, Asset, Utils, Tween } from '@three.ez/main';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
 const GLTF_PICACHU_URL = 'assets/pikachuFrame.glb';
@@ -14,10 +14,8 @@ export class Pikachu extends Group {
 
   constructor(username: string) {
     super();
-    const texture = new THREE.TextureLoader().load(`https://avatars.githubusercontent.com/${username ?? '%23'}`);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set( 4, 4 );
+    const texture = new TextureLoader().load(`https://avatars.githubusercontent.com/${username ?? '%23'}`);
+  
     const gltf = Asset.get<GLTF>(GLTF_PICACHU_URL);
     this.scale.divideScalar(5);
     console.log(this);
