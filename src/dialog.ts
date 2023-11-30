@@ -1,3 +1,4 @@
+const API = 'https://challange-server.vercel.app/';
 // dialog.ts
 export const openDialog = async () => {
   // Create a dialog container
@@ -13,7 +14,7 @@ export const openDialog = async () => {
   inputLabel.textContent = 'Enter your GitHub username:';
   const input = document.createElement('input');
   input.type = 'text';
-  input.value = 'luigidenora'
+  input.value = 'luigidenora';
   const closeButton = document.createElement('button');
   closeButton.textContent = 'Close';
 
@@ -67,7 +68,7 @@ const sendUsernameToServer = async (username: string) => {
   };
 
   // Replace the URL with your actual server URL
-  await fetch('http://localhost:3000/api/names', requestOptions)
+  await fetch(`${API}/api/names`, requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.log('error', error));
@@ -75,8 +76,7 @@ const sendUsernameToServer = async (username: string) => {
 
 const fetchAllNames = async () => {
   // Fetch all names from the server (replace with your actual logic)
-  const response = await fetch('http://localhost:3000/api/names');
+  const response = await fetch(`${API}/api/names`);
   const data = await response.json();
   return data.names;
 };
- 
