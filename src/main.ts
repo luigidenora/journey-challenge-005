@@ -3,6 +3,7 @@ import { AmbientLight, DirectionalLight, Scene, Vector3 } from 'three';
 import { openDialog } from './dialog';
 import { Pikachu } from './pikachu';
 import { Pokeball } from './pokeball';
+import { showMedals } from './medals';
 
 openDialog();
 const main = new Main({ disableContextMenu: false, showStats: false });
@@ -14,6 +15,7 @@ await Asset.preloadAllPending({
 
 window.addEventListener('fetchData', ((customEvent: CustomEvent) => {
   const names = customEvent.detail;
+  showMedals(names); // TODO: medals for only catched?
   const camera = new PerspectiveCameraAuto(50).translateZ(1).translateY(0.5);
   camera.lookAt(new Vector3());
   const scene = new Scene().add(

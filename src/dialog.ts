@@ -59,7 +59,6 @@ async function onFormSubmit(ev: SubmitEvent) {
 
 async function emitUsernameData() {
   const allNames = await fetchAllNames();
-  console.log('All Names:', allNames);
 
   // Dispatch a custom event with the fetched data
   const fetchDataEvent = new CustomEvent('fetchData', { detail: allNames });
