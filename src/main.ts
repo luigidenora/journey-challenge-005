@@ -20,4 +20,4 @@ const scene = new Scene().add(
   new AmbientLight('white', 1)
 );
 
-main.createView({ scene, camera: new PerspectiveCameraAuto(70).translateZ(0.5) });
+main.createView({ scene, camera: new PerspectiveCameraAuto(70).translateZ(0.5), backgroundColor: 'blue' });
