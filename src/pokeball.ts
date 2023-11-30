@@ -2,19 +2,9 @@ import { Asset, Tween, Utils } from '@three.ez/main';
 import {
   AnimationAction,
   AnimationMixer,
-  BufferGeometry,
   Camera,
-  FrontSide,
   Group,
-  LinearSRGBColorSpace,
-  MeshStandardMaterial,
   QuadraticBezierCurve3,
-  RepeatWrapping,
-  SRGBColorSpace,
-  SRGBToLinear,
-  SkinnedMesh,
-  TextureLoader,
-  Vector2,
   Vector3,
 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -27,9 +17,10 @@ export class Pokeball extends Group {
   private _action: AnimationAction;
   private _forceDir = new Vector3();
   private _force: number;
+  private _test: number;
   private _thrown = false;
   private _curve: QuadraticBezierCurve3;
-  private _origin: Vector3;
+  private _duration: number;
 
   constructor(camera: Camera) {
     super();
@@ -48,18 +39,12 @@ export class Pokeball extends Group {
     Utils.computeBoundingSphereChildren(this); // to make raycast works properly
     Utils.setChildrenDragTarget(this, this);
 
-    this._origin = this.position.clone();
-
     this.on('animate', e => {
       if (this._thrown) {
         this._mixer.update(e.delta);
-        // debugger;
-        this._force = Math.min(1, this._force + e.delta);
-        console.log(this._force);
-        this.position.copy(this._curve.getPointAt(this._force));
-        // if (this._force === 1) {
-        //   this.removeFromParent();
-        // }
+        this._test = Math.max(0, this._test - (e.delta / this._duration) * this._force);
+        // console.log(this._test);
+        this.position.copy(this._curve.getPointAt(1 - this._test / this._force));
       } else {
         // console.log(this._force);
       }
@@ -69,10 +54,16 @@ export class Pokeball extends Group {
       this._thrown = true;
       this.interceptByRaycaster = false;
 
-      this._force = 0;
-
-      const endPosition = this.position.clone().add(this.position.clone().sub(camera.position).setY(0).setLength(10));
-      const controlPoint = this._origin.clone().lerp(endPosition, 0.5).setY(this._forceDir.y * 3);
+      this._force = this._forceDir.length() * 20;
+      console.log(this._force);
+      this._duration = this._force / 10;
+      this._test = this._force;
+      const dir = this.position.clone().sub(camera.position);
+      const endPosition = this.position.clone().add(dir).setY(0).setLength(this._force);
+      const controlPoint = this.position
+        .clone()
+        .lerp(endPosition, 0.1)
+        .setY(this.position.y * 2);
 
       this._curve = new QuadraticBezierCurve3(this.position, controlPoint, endPosition);
     });
