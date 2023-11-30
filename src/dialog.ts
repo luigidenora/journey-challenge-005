@@ -68,7 +68,7 @@ const sendUsernameToServer = async (username: string) => {
   };
 
   // Replace the URL with your actual server URL
-  await fetch(`${API}/api/names`, requestOptions)
+  await fetch(`${API}api/names`, requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.log('error', error));
@@ -76,7 +76,7 @@ const sendUsernameToServer = async (username: string) => {
 
 const fetchAllNames = async () => {
   // Fetch all names from the server (replace with your actual logic)
-  const response = await fetch(`${API}/api/names`);
+  const response = await fetch(`${API}api/names`);
   const data = await response.json();
   return data.names;
 };
