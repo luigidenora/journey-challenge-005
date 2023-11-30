@@ -1,5 +1,7 @@
 export const showMedals = (allNames: string[]) => {
-  appendUniqueImgChildren(document.getElementById('medals') as HTMLDivElement, allNames);
+  const modalsDiv = document.getElementById('medals') as HTMLDivElement;
+  modalsDiv.classList.remove('hidden') 
+  appendUniqueImgChildren(modalsDiv, allNames);
 };
 
 function appendUniqueImgChildren(parent: HTMLDivElement, children: string[]) {

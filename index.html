@@ -29,13 +29,13 @@
       dialog {
         border: none;
         background: transparent;
-        bottom: 0;
+        margin-right: 0;
         border: none;
         max-width: calc(100vw - 2em);
       }
 
       .dialog-container {
-        bottom: 0;
+        top: 0;
         right: 0;
         margin: auto;
         width: 500px;
@@ -46,6 +46,7 @@
         padding: 1vw;
         max-width: 100%;
         box-sizing: border-box;
+        margin: 1vw;
       }
 
       .dialog-container > .dialog-content {
@@ -187,11 +188,25 @@
       }
 
       .medals-container {
-        display: flex;
-        top: 0;
+        height: auto;
         width: 100%;
         padding: 12px;
         gap: 12px;
+        width: fit-content;
+        min-width: 52px;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        justify-content: center;
+      }
+
+      .medals-container .medals-scroll {
+        max-height: 100%;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        margin: 10px 0px;
+        max-width: 100%;
       }
 
       .medals {
@@ -209,10 +224,38 @@
         display: flex;
         width: 30vh;
         right: 0;
+        bottom: 0;
         left: 0;
+        top: 0;
       }
       .loading-gif {
         width: 30vh;
+      }
+
+      .actions-pixel-side {
+        position: absolute;
+        padding: 8px 8px 9px 35px;
+        top: 30px;
+        left: 54px;
+        cursor: pointer;
+      }
+
+      .actions-pixel-side:before {
+        z-index: 0;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .side-container {
+        margin: 1vw;
+        position: fixed;
+      }
+
+      .closed {
+      }
+      .opened {
       }
     </style>
   </head>
@@ -236,10 +279,12 @@
       <img src="pika.gif" alt="pikaloading" class="loading-gif" />
       <label class="font-shadow">Loading...</label>
     </div>
-    <div class="medals-container ">
-      <div class="gradient pixel-borders" id="medals">
-        <img class="medals" id="brunosimon" src="https://avatars.githubusercontent.com/brunosimon" alt="" srcset="">
-        <img class="medals" id="luigidenora" src="https://avatars.githubusercontent.com/luigidenora" alt="" srcset="">
+    <div class="side-container" id="side-container">
+      <div id="toggle-side-container" class="gradient pixel-borders actions-pixel-side closed">
+        <span class="close hidden">&#60;</span><span class="open">&#62;</span>
+      </div>
+      <div class="medals-container gradient pixel-borders">
+        <div class="hidden medals-scroll" id="medals"></div>
       </div>
     </div>
   </body>

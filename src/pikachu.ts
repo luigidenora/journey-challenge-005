@@ -2,14 +2,11 @@ import { Asset, Tween, Utils } from '@three.ez/main';
 import {
   AnimationAction,
   AnimationMixer,
+  Box3,
   BufferGeometry,
-  FrontSide,
   Group,
-  LinearSRGBColorSpace,
   MeshStandardMaterial,
-  RepeatWrapping,
   SRGBColorSpace,
-  SRGBToLinear,
   SkinnedMesh,
   TextureLoader,
   Vector2,
@@ -19,11 +16,13 @@ import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 
 Asset.preload(GLTFLoader, 'pikachuFrame.glb');
 
+export let pikaGeoBBox: Box3;
+
 export class Pikachu extends Group {
+  public bbox = new Box3();
   private _mixer = new AnimationMixer(this);
-  private _idleAction: AnimationAction;
-  private _runAction: AnimationAction;
   private _speed = Math.random() + 1;
+  private _catched = false;
 
   constructor(username: string) {
     super();
@@ -36,11 +35,18 @@ export class Pikachu extends Group {
 
     const gltf = Asset.get<GLTF>('pikachuFrame.glb');
     this.scale.setScalar(0);
-    console.log(this);
     this.add(...clone(gltf.scene).children);
-    this._idleAction = this._mixer.clipAction(gltf.animations[0]).play();
+    this._mixer.clipAction(gltf.animations[0]).play();
 
-    Utils.computeBoundingSphereChildren(this); // to make raycast works properly
+    if (pikaGeoBBox === undefined) {
+      pikaGeoBBox = new Box3();
+      this.traverse(obj => {
+        if ((obj as SkinnedMesh).isSkinnedMesh) {
+          (obj as SkinnedMesh).geometry.computeBoundingBox();
+          pikaGeoBBox.union((obj as SkinnedMesh).geometry.boundingBox);
+        }
+      });
+    }
 
     const object = this.getObjectByName('PikachuF_6') as SkinnedMesh<
       BufferGeometry,
@@ -51,8 +57,7 @@ export class Pikachu extends Group {
     material.map = texture;
 
     const map = (
-      (this.getObjectByName('PikachuF_4') as SkinnedMesh)
-        .material as MeshStandardMaterial
+      (this.getObjectByName('PikachuF_4') as SkinnedMesh).material as MeshStandardMaterial
     ).map;
 
     this.tween()
@@ -77,8 +82,17 @@ export class Pikachu extends Group {
     const tween2 = new Tween(map).then(tween).repeatForever().start();
 
     this.on('animate', e => {
+      if (this._catched) return;
       this._mixer.update(e.delta * this._speed);
-      this.translateZ(e.delta * this._speed * 0.3);
+      this.translateZ(e.delta * this._speed * 0.1);
     });
+  }
+
+  public catch(): void {
+    this._catched = true;
+    this.tween()
+      .to(300, { scale: 0 }, { easing: 'linear' })
+      .call(() => this.removeFromParent())
+      .start();
   }
 }
