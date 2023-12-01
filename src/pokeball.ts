@@ -2,28 +2,37 @@ import { Asset, Tween, Utils } from '@three.ez/main';
 import {
   AnimationAction,
   AnimationMixer,
+  Audio,
   AudioLoader,
   Box3,
   Camera,
   CircleGeometry,
-  DoubleSide,
   Group,
   Mesh,
   MeshBasicMaterial,
   QuadraticBezierCurve3,
   SkinnedMesh,
-  Vector3,
-  Audio,
+  TextureLoader,
+  Vector3
 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
-import { Pikachu, pikaGeoBBox } from './pikachu';
 import { Confetti } from './confetti';
+import { Pikachu, pikaGeoBBox } from './pikachu';
 
 Asset.preload(GLTFLoader, 'pokeball.glb');
 Asset.preload(AudioLoader, 'throw.mp3', 'pokeball.mp3');
+Asset.preload(TextureLoader, {
+  path: 'pokeball.png', onLoad: () => {
+    targetMaterial = new MeshBasicMaterial({ map: Asset.get('pokeball.png'), transparent: true })
+  }
+});
+
 
 let bboxGeo: Box3;
+let targetMaterial: MeshBasicMaterial;
+
+const targetGeometry = new CircleGeometry(0.25);
 
 export class Pokeball extends Group {
   private _mixer = new AnimationMixer(this);
@@ -45,12 +54,9 @@ export class Pokeball extends Group {
     this.children[0].scale.setScalar(0);
     this._action = this._mixer.clipAction(gltf.animations[0]);
     this._action.repetitions = 1;
-    this._target = new Mesh(
-      new CircleGeometry(0.25),
-      new MeshBasicMaterial({ color: 'red', side: DoubleSide }),
-    );
+    this._target = new Mesh(targetGeometry, targetMaterial);
     this._target.bindProperty('visible', () => this.children[0].dragging);
-    this._target.rotateX(Math.PI / 2);
+    this._target.rotateX(Math.PI / -2);
     this.add(this._target);
 
     this.children[0].tween().to(500, { scale: 4 }, { easing: 'easeOutBack' }).start();
