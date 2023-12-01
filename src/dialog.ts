@@ -8,6 +8,11 @@ export const openDialog = async () => {
 
   // Add event listener for the close button
   form.addEventListener('submit', onFormSubmit);
+
+  const closeModal = document.getElementById('close-nickname-dialog');
+
+  // Add event listener for the close button
+  closeModal.addEventListener('click', () => (document.getElementById('nickname-dialog') as HTMLDialogElement).close());
 };
 
 const sendUsernameToServer = async (username: string) => {
