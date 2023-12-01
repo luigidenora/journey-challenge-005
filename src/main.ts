@@ -19,9 +19,7 @@ window.addEventListener('fetchData', ((customEvent: CustomEvent) => {
   const camera = new PerspectiveCameraAuto(50).translateZ(1).translateY(0.25);
   camera.lookAt(new Vector3());
 
-  const pika: Pikachu[] = names.map((n: string, i: number) =>
-    new Pikachu(n).translateX(6 * Math.random() - 3),
-  );
+  const pika: Pikachu[] = names.map((n: string, i: number) => new Pikachu(n));
 
   const audioListener = new AudioListener();
   const scene = new Scene().add(

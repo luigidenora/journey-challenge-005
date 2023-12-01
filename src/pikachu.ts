@@ -9,6 +9,7 @@ import {
   SkinnedMesh,
   TextureLoader,
   Vector2,
+  Vector3,
 } from 'three';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
@@ -16,6 +17,8 @@ import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 Asset.preload(GLTFLoader, 'pikachuFrame.glb');
 
 export let pikaGeoBBox: Box3;
+
+const lookAtVec = new Vector3(0, 0, 1.5);
 
 export class Pikachu extends Group {
   public bbox = new Box3();
@@ -30,6 +33,8 @@ export class Pikachu extends Group {
     );
     texture.colorSpace = SRGBColorSpace;
     this.translateZ(-5);
+    this.translateX(8 * Math.random() - 4);
+    this.lookAt(lookAtVec)
     this.interceptByRaycaster = false;
 
     const gltf = Asset.get<GLTF>('pikachuFrame.glb');

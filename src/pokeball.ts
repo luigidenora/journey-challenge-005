@@ -53,7 +53,7 @@ export class Pokeball extends Group {
     this._target.rotateX(Math.PI / 2);
     this.add(this._target);
 
-    this.children[0].tween().to(500, { scale: 5 }, { easing: 'easeOutBack' }).start();
+    this.children[0].tween().to(500, { scale: 4 }, { easing: 'easeOutBack' }).start();
 
     Utils.computeBoundingSphereChildren(this); // to make raycast works properly
     Utils.setChildrenDragTarget(this.children[0], this.children[0]);
