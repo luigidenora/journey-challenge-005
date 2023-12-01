@@ -1,9 +1,11 @@
 import { Asset, Main, PerspectiveCameraAuto } from '@three.ez/main';
-import { AmbientLight, DirectionalLight, Scene, Vector3, AudioListener } from 'three';
+import { AmbientLight, DirectionalLight, Scene, Vector3, AudioListener, Mesh, PlaneGeometry, MeshBasicMaterial, MeshLambertMaterial, TextureLoader, Texture, RepeatWrapping, SRGBColorSpace } from 'three';
 import { openDialog } from './dialog';
 import { Pikachu } from './pikachu';
 import { Pokeball } from './pokeball';
 import { showMedals } from './medals';
+
+Asset.preload(TextureLoader, 'grass.jpg');
 
 openDialog();
 await Asset.preloadAllPending({
@@ -22,9 +24,16 @@ window.addEventListener('fetchData', ((customEvent: CustomEvent) => {
   const pika: Pikachu[] = names.map((n: string, i: number) => new Pikachu(n));
 
   const audioListener = new AudioListener();
+  const texture = Asset.get<Texture>('grass.jpg');
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+  texture.repeat.set(612 * 10, 601 * 10);
+  texture.colorSpace = SRGBColorSpace;
+
   const scene = new Scene().add(
     new DirectionalLight('white', 2).translateZ(1),
     new AmbientLight('white', 1),
+    new Mesh(new PlaneGeometry(1000, 1000), new MeshLambertMaterial({ map: texture })).rotateX(Math.PI / -2),
     ...pika,
     new Pokeball(camera),
   );

@@ -51,15 +51,17 @@ export class Pokeball extends Group {
     const gltf = Asset.get<GLTF>('pokeball.glb');
     this.add(...clone(gltf.scene).children);
     this.children[0].rotation.z = -Math.PI / 2;
-    this.children[0].scale.setScalar(0);
+    this.children[0].scale.setScalar(0.0001);
     this._action = this._mixer.clipAction(gltf.animations[0]);
     this._action.repetitions = 1;
     this._target = new Mesh(targetGeometry, targetMaterial);
     this._target.bindProperty('visible', () => this.children[0].dragging);
     this._target.rotateX(Math.PI / -2);
     this.add(this._target);
+    this.translateY(0.15);
+    this.translateZ(0.7);
 
-    this.children[0].tween().to(500, { scale: 4 }, { easing: 'easeOutBack' }).start();
+    this.children[0].tween().to(500, { scale: 2 }, { easing: 'easeOutBack' }).start();
 
     Utils.computeBoundingSphereChildren(this); // to make raycast works properly
     Utils.setChildrenDragTarget(this.children[0], this.children[0]);
@@ -129,17 +131,18 @@ export class Pokeball extends Group {
     this.on('drag', e => {
       const quatCam = camera.quaternion.clone().invert();
       const test = this.children[0].getWorldPosition(new Vector3());
-      test.x *= -1;
-      test.y *= 10;
+      test.x *= -1 / 10;
+      test.y *= 1;
       const dir = test.clone().sub(camera.position).applyQuaternion(quatCam);
+      console.log(dir);
       dir.z = dir.y;
       dir.y = 0;
       this._rotAxis = dir.normalize();
       const endPosition = test
-        .clone()
-        .add(dir)
-        .setY(0)
-        .setLength(test.length() * 2.5);
+      .clone()
+      .add(dir)
+      .setY(0)
+      .setLength(test.length() * 2);
       this._target.position.copy(endPosition);
     });
 
