@@ -8,12 +8,16 @@ function appendUniqueImgChildren(parent: HTMLDivElement, children: string[]) {
   const documentFragment = document.createDocumentFragment();
   const imgIds = new Set();
   children.forEach(child => {
+    try {
     if (!imgIds.has(child)) {
       imgIds.add(child);
       if (!parent.querySelector(`#${child}`)) {
         documentFragment.appendChild(createImgFromString(child));
       }
     }
+  } catch {
+    
+  }
   });
   parent.appendChild(documentFragment);
 }
